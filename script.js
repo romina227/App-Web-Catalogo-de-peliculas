@@ -1,96 +1,77 @@
-const apiKey = 'ac559daa4ef1341c6e1cc2b10f80169c'; // Reemplaza con tu clave API
-const apiUrl = 'https://api.themoviedb.org/3';
-const movieList = document.getElementById('movies');
-const movieDetails = document.getElementById('movie-details');
-const detailsContainer = document.getElementById('details');
-const searchButton = document.getElementById('search-button');
-const searchInput = document.getElementById('search-input');
-const favoritesList = document.getElementById('favorites-list');
-const addToFavoritesButton = document.getElementById('add-to-favorites');
-let selectedMovieId = null;
-let favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
+const API_KEY = 'ac559daa4ef1341c6e1cc2b10f80169c'; // Inserta tu API Key aquí
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+const popularMoviesContainer = document.getElementById('movie-list');
+const movieDetailsContainer = document.getElementById('movie-details');
+const favoriteMoviesContainer = document.getElementById('favorite-movies');
 
-// Fetch and display popular movies
+let favoriteMovies = [];
+
+// Función para obtener las películas populares
 async function fetchPopularMovies() {
-    try {
-        const response = await fetch(`${apiUrl}/movie/popular?api_key=${apiKey}`);
-        const data = await response.json();
-        displayMovies(data.results);
-    } catch (error) {
-        console.error('Error fetching popular movies:', error);
-    }
+  const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+  const data = await response.json();
+  displayMovies(data.results);
 }
 
-// Display movies
+// Función para mostrar las películas populares
 function displayMovies(movies) {
-    movieList.innerHTML = ''; // Limpia la lista de películas
-    movies.forEach(movie => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-            <span>${movie.title}</span>
-        `;
-        li.onclick = () => showMovieDetails(movie.id); // Muestra detalles al hacer clic en la película
-        movieList.appendChild(li);
-    });
+  popularMoviesContainer.innerHTML = '';
+  movies.forEach(movie => {
+    const movieCard = `
+      <div class="movie-card" onclick="showMovieDetails(${movie.id})">
+        <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
+        <h3>${movie.title}</h3>
+      </div>
+    `;
+    popularMoviesContainer.innerHTML += movieCard;
+  });
 }
 
-// Show movie details
+// Función para mostrar detalles de la película seleccionada
 async function showMovieDetails(movieId) {
-    selectedMovieId = movieId; // Guarda el ID de la película seleccionada
-    try {
-        const response = await fetch(`${apiUrl}/movie/${movieId}?api_key=${apiKey}`);
-        const movie = await response.json();
-        detailsContainer.innerHTML = `
-            <h3>${movie.title}</h3>
-            <p>${movie.overview}</p>
-            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-        `;
-    } catch (error) {
-        console.error('Error fetching movie details:', error);
-    }
+  const response = await fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`);
+  const movie = await response.json();
+  
+  const movieDetails = `
+    <h2>${movie.title}</h2>
+    <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
+    <p>${movie.overview}</p>
+    <p>Fecha de lanzamiento: ${movie.release_date}</p>
+    <button onclick="addToFavorites('${movie.title}')">Agregar a Favoritos</button>
+  `;
+  movieDetailsContainer.innerHTML = movieDetails;
 }
 
-// Search movies
-searchButton.addEventListener('click', async () => {
-    const query = searchInput.value;
-    if (query) {
-        try {
-            const response = await fetch(`${apiUrl}/search/movie?api_key=${apiKey}&query=${encodeURIComponent(query)}`);
-            const data = await response.json();
-            displayMovies(data.results);
-        } catch (error) {
-            console.error('Error searching movies:', error);
-        }
-    }
-});
-
-// Add movie to favorites
-addToFavoritesButton.addEventListener('click', () => {
-    if (selectedMovieId) {
-        const favoriteMovie = {
-            id: selectedMovieId,
-            title: document.querySelector('#details h3').textContent
-        };
-        if (!favoriteMovies.some(movie => movie.id === selectedMovieId)) {
-            favoriteMovies.push(favoriteMovie);
-            localStorage.setItem('favorites', JSON.stringify(favoriteMovies)); // Guarda en localStorage
-            displayFavorites(); // Muestra la lista actualizada de favoritos
-        }
-    }
-});
-
-// Display favorite movies
-function displayFavorites() {
-    favoritesList.innerHTML = ''; // Limpia la lista de favoritos
-    favoriteMovies.forEach(movie => {
-        const li = document.createElement('li');
-        li.textContent = movie.title;
-        favoritesList.appendChild(li);
-    });
+// Función para buscar películas
+async function searchMovies(query) {
+  const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
+  const data = await response.json();
+  displayMovies(data.results);
 }
 
-// Initial fetch of popular movies and display favorites
-fetchPopularMovies(); // Obtiene y muestra las películas populares
-displayFavorites(); // Muestra las películas favoritas guardadas
+// Función para agregar películas a favoritos
+function addToFavorites(movieTitle) {
+  if (!favoriteMovies.includes(movieTitle)) {
+    favoriteMovies.push(movieTitle);
+    displayFavoriteMovies();
+  }
+}
 
+// Función para mostrar las películas favoritas
+function displayFavoriteMovies() {
+  favoriteMoviesContainer.innerHTML = '';
+  favoriteMovies.forEach(movie => {
+    favoriteMoviesContainer.innerHTML += `<li>${movie}</li>`;
+  });
+}
+
+// Agregar event listener al botón de búsqueda
+const searchButton = document.getElementById('search-button');
+searchButton.addEventListener('click', () => {
+  const query = document.getElementById('search-input').value;
+  searchMovies(query);
+});
+
+// Inicializar cargando las películas populares
+fetchPopularMovies();

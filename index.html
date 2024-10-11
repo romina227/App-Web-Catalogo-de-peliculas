@@ -9,25 +9,30 @@
 <body>
     <div class="container">
         <h1>Aplicación de Información de Películas</h1>
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Buscar películas">
+
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar películas...">
             <button id="search-button">Buscar</button>
         </div>
-        <main>
-            <section id="movie-list">
+
+        <div class="movies-container">
+            <div class="column" id="popular-movies">
                 <h2>Películas Populares</h2>
-                <div id="popular-movies"></div>
-            </section>
-            <section id="movie-details" class="hidden">
-                <h2>Detalles de la Película</h2>
-                <div id="details"></div>
-            </section>
-            <section id="favorites">
+                <!-- Las películas populares se añadirán dinámicamente aquí -->
+            </div>
+
+            <div class="column" id="favorite-movies">
                 <h2>Películas Favoritas</h2>
-                <ul id="favorites-list"></ul>
-            </section>
-        </main>
+                <!-- Las películas favoritas se añadirán aquí -->
+            </div>
+            
+            <div class="column" id="movie-details" style="display: none;">
+                <h2>Detalles de la Película</h2>
+                <!-- Los detalles de la película seleccionada se mostrarán aquí -->
+            </div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

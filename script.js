@@ -1,9 +1,10 @@
 const API_URL = 'https://api.themoviedb.org/3/movie/popular?api_key=ac559daa4ef1341c6e1cc2b10f80169c';
-const IMG_URL = 'https://image.tmdb.org/t/p/w200'; // Para las imágenes de las películas
+const IMG_URL = 'https://image.tmdb.org/t/p/w200';
 const popularMoviesContainer = document.getElementById('popular-movies');
 const movieDetailsContainer = document.getElementById('movie-details');
+const favoritesContainer = document.getElementById('favorites');
 
-// Oculta los detalles de la película hasta que se selecciona una
+// Oculta inicialmente el contenedor de detalles de la película
 movieDetailsContainer.style.display = 'none';
 
 document.addEventListener('DOMContentLoaded', fetchPopularMovies);
@@ -18,12 +19,11 @@ function fetchPopularMovies() {
 }
 
 function displayPopularMovies(movies) {
-    popularMoviesContainer.innerHTML = '<h2>Películas Populares</h2>'; // Asegura que el título permanezca
+    popularMoviesContainer.innerHTML = ''; // Limpia el contenedor
     movies.forEach(movie => {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
-        
-        // Validación por si no hay imagen
+
         const moviePoster = movie.poster_path 
             ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
             : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
@@ -38,10 +38,8 @@ function displayPopularMovies(movies) {
 }
 
 function showMovieDetails(movie) {
-    // Muestra los detalles de la película en el contenedor de detalles
-    movieDetailsContainer.style.display = 'block';
+    movieDetailsContainer.style.display = 'block'; // Muestra el contenedor de detalles
     
-    // Validación por si no hay imagen o descripción
     const moviePoster = movie.poster_path 
         ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
         : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
@@ -56,5 +54,25 @@ function showMovieDetails(movie) {
         <h3>${movie.title}</h3>
         <p>${movieOverview}</p>
         <p><strong>Fecha de lanzamiento:</strong> ${movie.release_date}</p>
+        <button id="add-to-favorites">Agregar a Favoritos</button>
     `;
+
+    // Agregar evento al botón de "Agregar a Favoritos"
+    document.getElementById('add-to-favorites').addEventListener('click', () => addToFavorites(movie));
+}
+
+function addToFavorites(movie) {
+    const favoriteMovieCard = document.createElement('div');
+    favoriteMovieCard.classList.add('movie-card');
+
+    const moviePoster = movie.poster_path 
+        ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
+        : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
+
+    favoriteMovieCard.innerHTML = `
+        ${moviePoster}
+        <h3>${movie.title}</h3>
+    `;
+
+    favoritesContainer.appendChild(favoriteMovieCard);
 }

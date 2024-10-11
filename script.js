@@ -3,6 +3,9 @@ const IMG_URL = 'https://image.tmdb.org/t/p/w200'; // Para las imágenes de las 
 const popularMoviesContainer = document.getElementById('popular-movies');
 const movieDetailsContainer = document.getElementById('movie-details');
 
+// Oculta los detalles de la película hasta que se selecciona una
+movieDetailsContainer.style.display = 'none';
+
 document.addEventListener('DOMContentLoaded', fetchPopularMovies);
 
 function fetchPopularMovies() {
@@ -19,8 +22,14 @@ function displayPopularMovies(movies) {
     movies.forEach(movie => {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
+        
+        // Validación por si no hay imagen
+        const moviePoster = movie.poster_path 
+            ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
+            : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
+
         movieCard.innerHTML = `
-            <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
+            ${moviePoster}
             <h3>${movie.title}</h3>
         `;
         movieCard.addEventListener('click', () => showMovieDetails(movie));
@@ -31,12 +40,21 @@ function displayPopularMovies(movies) {
 function showMovieDetails(movie) {
     // Muestra los detalles de la película en el contenedor de detalles
     movieDetailsContainer.style.display = 'block';
+    
+    // Validación por si no hay imagen o descripción
+    const moviePoster = movie.poster_path 
+        ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
+        : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
+    
+    const movieOverview = movie.overview 
+        ? movie.overview
+        : 'Descripción no disponible';
+
     movieDetailsContainer.innerHTML = `
         <h2>Detalles de la Película</h2>
-        <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
+        ${moviePoster}
         <h3>${movie.title}</h3>
-        <p>${movie.overview}</p>
+        <p>${movieOverview}</p>
         <p><strong>Fecha de lanzamiento:</strong> ${movie.release_date}</p>
     `;
 }
-

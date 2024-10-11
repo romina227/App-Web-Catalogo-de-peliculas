@@ -41,10 +41,13 @@ async function showMovieDetails(movieId) {
             ${favoriteMovies.includes(movie.title) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}
         </button>
     `;
-    movieDetailsContainer.innerHTML = movieDetails;
+    document.getElementById('details').innerHTML = movieDetails;
+    
+    // Mostrar la sección de detalles de película sin ocultar las películas populares
     movieDetailsContainer.classList.remove('hidden');
-    mainContainer.classList.add('show-details');
+    movieDetailsContainer.classList.add('show');
 }
+
 
 function toggleFavorite(movieTitle) {
     const index = favoriteMovies.indexOf(movieTitle);

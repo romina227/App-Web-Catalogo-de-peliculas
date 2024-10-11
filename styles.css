@@ -55,12 +55,12 @@ section {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#movie-list {
-    width: 70%;
+#movie-list, #favorites {
+    width: calc(50% - 10px);
 }
 
-#favorites {
-    width: 30%;
+#movie-details {
+    width: calc(33.33% - 13.33px);
 }
 
 #popular-movies {
@@ -70,7 +70,7 @@ section {
 }
 
 .movie-card {
-    width: calc(33.33% - 10px);
+    width: calc(50% - 5px);
     cursor: pointer;
 }
 
@@ -87,4 +87,14 @@ section {
 
 #favorites-list li {
     margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilos para cuando se muestra la columna de detalles */
+main.show-details #movie-list,
+main.show-details #favorites {
+    width: calc(33.33% - 13.33px);
 }

@@ -53,6 +53,13 @@ section {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#movie-list, #favorites {
+    width: calc(50% - 10px);
+}
+
+#movie-details {
     width: calc(33.33% - 14px);
 }
 
@@ -63,12 +70,15 @@ section {
 }
 
 .movie-card {
+    display: flex;
+    align-items: center;
     cursor: pointer;
 }
 
 .movie-card img {
-    width: 100%;
+    width: 100px;
     height: auto;
+    margin-right: 10px;
     border-radius: 5px;
 }
 
@@ -85,4 +95,8 @@ section {
 
 #favorites-list li {
     margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
 }

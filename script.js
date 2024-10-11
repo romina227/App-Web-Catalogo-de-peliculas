@@ -1,78 +1,99 @@
-const API_URL = 'https://api.themoviedb.org/3/movie/popular?api_key=ac559daa4ef1341c6e1cc2b10f80169c';
-const IMG_URL = 'https://image.tmdb.org/t/p/w200';
-const popularMoviesContainer = document.getElementById('popular-movies');
-const movieDetailsContainer = document.getElementById('movie-details');
-const favoritesContainer = document.getElementById('favorites');
+const apiKey = 'ac559daa4ef1341c6e1cc2b10f80169c'; 
+const apiUrl = 'https://api.themoviedb.org/3';
+const movieList = document.getElementById('movies');
+const movieDetails = document.getElementById('movie-details');
+const searchButton = document.getElementById('search-button');
+const searchInput = document.getElementById('search-input');
+const favoritesList = document.getElementById('favorites-list');
+const addToFavoritesButton = document.getElementById('add-to-favorites');
 
-// Oculta inicialmente el contenedor de detalles de la película
-movieDetailsContainer.style.display = 'none';
+let selectedMovieId = null;
+let favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
 
-document.addEventListener('DOMContentLoaded', fetchPopularMovies);
-
-function fetchPopularMovies() {
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(data => {
-            displayPopularMovies(data.results);
-        })
-        .catch(error => console.error('Error al cargar películas populares:', error));
+// Fetch and display popular movies
+async function fetchPopularMovies() {
+  try {
+    const response = await fetch(`${apiUrl}/movie/popular?api_key=${apiKey}`);
+    const data = await response.json();
+    displayMovies(data.results);
+  } catch (error) {
+    console.error('Error fetching popular movies:', error);
+  }
 }
 
-function displayPopularMovies(movies) {
-    popularMoviesContainer.innerHTML = ''; // Limpia el contenedor
-    movies.forEach(movie => {
-        const movieCard = document.createElement('div');
-        movieCard.classList.add('movie-card');
-
-        const moviePoster = movie.poster_path 
-            ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
-            : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
-
-        movieCard.innerHTML = `
-            ${moviePoster}
-            <h3>${movie.title}</h3>
-        `;
-        movieCard.addEventListener('click', () => showMovieDetails(movie));
-        popularMoviesContainer.appendChild(movieCard);
+// Display movies
+function displayMovies(movies) {
+  movieList.innerHTML = '';
+  movies.forEach(movie => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+      <span>${movie.title}</span>
+      <button data-movie-id="${movie.id}">Ver detalles</button>
+    `;
+    li.querySelector('button').addEventListener('click', (event) => {
+      const movieId = event.target.dataset.movieId;
+      showMovieDetails(movieId);
     });
+    movieList.appendChild(li);
+  });
 }
 
-function showMovieDetails(movie) {
-    movieDetailsContainer.style.display = 'block'; // Muestra el contenedor de detalles
-    
-    const moviePoster = movie.poster_path 
-        ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
-        : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
-    
-    const movieOverview = movie.overview 
-        ? movie.overview
-        : 'Descripción no disponible';
+// Show movie details
+async function showMovieDetails(movieId) {
+  try {
+    const response = await fetch(`${apiUrl}/movie/${movieId}?api_key=${apiKey}`);
+    const data = await response.json();
 
-    movieDetailsContainer.innerHTML = `
-        <h2>Detalles de la Película</h2>
-        ${moviePoster}
-        <h3>${movie.title}</h3>
-        <p>${movieOverview}</p>
-        <p><strong>Fecha de lanzamiento:</strong> ${movie.release_date}</p>
-        <button id="add-to-favorites">Agregar a Favoritos</button>
+    movieDetails.innerHTML = `
+      <h3>${data.title}</h3>
+      <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}">
+      <p>${data.overview}</p>
     `;
-
-    // Agregar evento al botón de "Agregar a Favoritos"
-    document.getElementById('add-to-favorites').addEventListener('click', () => addToFavorites(movie));
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+  }
 }
 
-function addToFavorites(movie) {
-    const favoriteMovieCard = document.createElement('div');
-    favoriteMovieCard.classList.add('movie-card');
+// Search movies
+searchButton.addEventListener('click', async () => {
+  const query = searchInput.value;
+  if (query) {
+    try {
+      const response = await fetch(`${apiUrl}/search/movie?api_key=${apiKey}&query=${query}`);
+      const data = await response.json();
+      displayMovies(data.results);
+    } catch (error) {
+      console.error('Error searching movies:', error);
+    }
+  }
+});
 
-    const moviePoster = movie.poster_path 
-        ? `<img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">`
-        : `<img src="placeholder.jpg" alt="Imagen no disponible">`;
+// Add movie to favorites
+addToFavoritesButton.addEventListener('click', () => {
+  if (selectedMovieId) {
+    const favoriteMovie = {
+      id: selectedMovieId,
+      title: document.querySelector('#details h3').textContent
+    };
+    if (!favoriteMovies.some(movie => movie.id === selectedMovieId)) {
+      favoriteMovies.push(favoriteMovie);
+      localStorage.setItem('favorites', JSON.stringify(favoriteMovies));
+      displayFavorites();
+    }
+  }
+});
 
-    favoriteMovieCard.innerHTML = `
-        ${moviePoster}
-        <h3>${movie.title}</h3>
-    `;
-
-    favoritesContainer.appendChild(favoriteMovieCard);
+// Display favorite movies
+function displayFavorites() {
+  favoritesList.innerHTML = '';
+  favoriteMovies.forEach(movie => {
+    const li = document.createElement('li');
+    li.textContent = movie.title;
+    favoritesList.appendChild(li);
+  });
 }
+
+// Initial fetch of popular movies and display favorites
+fetchPopularMovies();
+displayFavorites();

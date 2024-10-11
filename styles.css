@@ -70,7 +70,7 @@ section {
 }
 
 .movie-card {
-    width: calc(30% - 10px);
+    width: calc(33.33% - 10px);
     cursor: pointer;
 }
 

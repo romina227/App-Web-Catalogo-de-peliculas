@@ -2,7 +2,6 @@ const API_KEY = 'ac559daa4ef1341c6e1cc2b10f80169c';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const popularMoviesContainer = document.getElementById('popular-movies');
-const movieDetailsContainer = document.getElementById('movie-details');
 const favoriteMoviesContainer = document.getElementById('favorites-list');
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-button');
@@ -32,7 +31,8 @@ async function showMovieDetails(movieId) {
     const movie = await response.json();
     
     const movieDetails = `
-        <h2>${movie.title}</h2>
+        <h2>Detalles de la Película</h2>
+        <h3>${movie.title}</h3>
         <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
         <p>${movie.overview}</p>
         <p>Fecha de lanzamiento: ${movie.release_date}</p>
@@ -40,8 +40,7 @@ async function showMovieDetails(movieId) {
             ${favoriteMovies.includes(movie.title) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}
         </button>
     `;
-    movieDetailsContainer.innerHTML = movieDetails;
-    movieDetailsContainer.classList.remove('hidden');
+    popularMoviesContainer.innerHTML = movieDetails;
 }
 
 function toggleFavorite(movieTitle) {
@@ -57,7 +56,7 @@ function toggleFavorite(movieTitle) {
 }
 
 function updateFavoriteButton(movieTitle) {
-    const favoriteButton = movieDetailsContainer.querySelector('button');
+    const favoriteButton = popularMoviesContainer.querySelector('button');
     favoriteButton.textContent = favoriteMovies.includes(movieTitle) ? 'Quitar de Favoritos' : 'Agregar a Favoritos';
 }
 

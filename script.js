@@ -2,9 +2,11 @@ const API_KEY = 'ac559daa4ef1341c6e1cc2b10f80169c';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const popularMoviesContainer = document.getElementById('popular-movies');
+const movieDetailsContainer = document.getElementById('movie-details');
 const favoriteMoviesContainer = document.getElementById('favorites-list');
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-button');
+const mainContainer = document.querySelector('main');
 let favoriteMovies = JSON.parse(localStorage.getItem('favoriteMovies')) || [];
 
 async function fetchPopularMovies() {
@@ -31,7 +33,6 @@ async function showMovieDetails(movieId) {
     const movie = await response.json();
     
     const movieDetails = `
-        <h2>Detalles de la Película</h2>
         <h3>${movie.title}</h3>
         <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}">
         <p>${movie.overview}</p>
@@ -40,7 +41,9 @@ async function showMovieDetails(movieId) {
             ${favoriteMovies.includes(movie.title) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}
         </button>
     `;
-    popularMoviesContainer.innerHTML = movieDetails;
+    movieDetailsContainer.innerHTML = movieDetails;
+    movieDetailsContainer.classList.remove('hidden');
+    mainContainer.classList.add('show-details');
 }
 
 function toggleFavorite(movieTitle) {
@@ -56,7 +59,7 @@ function toggleFavorite(movieTitle) {
 }
 
 function updateFavoriteButton(movieTitle) {
-    const favoriteButton = popularMoviesContainer.querySelector('button');
+    const favoriteButton = movieDetailsContainer.querySelector('button');
     favoriteButton.textContent = favoriteMovies.includes(movieTitle) ? 'Quitar de Favoritos' : 'Agregar a Favoritos';
 }
 
@@ -78,6 +81,8 @@ async function searchMovies(query) {
     const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
     const data = await response.json();
     displayMovies(data.results);
+    movieDetailsContainer.classList.add('hidden');
+    mainContainer.classList.remove('show-details');
 }
 
 fetchPopularMovies();

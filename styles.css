@@ -1,100 +1,22 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.search-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#search-input {
-    padding: 10px;
-    width: 300px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-#search-button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #28a745;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-#search-button:hover {
-    background-color: #218838;
-}
-
-main {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-section {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-#movie-list, #favorites {
-    width: calc(50% - 10px);
-}
-
-#movie-details {
-    width: calc(33.33% - 13.33px);
-}
-
 #popular-movies {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column; /* Hace que las películas se muestren en una columna */
+    gap: 20px; /* Añade espacio entre las películas */
 }
 
 .movie-card {
-    width: calc(50% - 5px);
+    display: flex;
+    align-items: center;
     cursor: pointer;
 }
 
 .movie-card img {
-    width: 100%;
+    width: 150px;
     height: auto;
-    border-radius: 5px;
+    margin-right: 15px;
 }
 
-#favorites-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-#favorites-list li {
-    margin-bottom: 10px;
-}
-
-.hidden {
-    display: none;
-}
-
-/* Estilos para cuando se muestra la columna de detalles */
-main.show-details #movie-list,
-main.show-details #favorites {
-    width: calc(33.33% - 13.33px);
+.movie-card h3 {
+    margin: 0;
+    font-size: 1.2em;
 }
